@@ -1,0 +1,326 @@
+syntax="proto3";
+
+package BookingService;
+
+option go_package = "github.com/pedroxer/booking-service/internal/proto_gen";
+
+
+import "google/protobuf/timestamp.proto";
+
+
+service BookingService{
+  rpc CreateBooking(CreateBookingRequest) returns (Booking);
+  rpc GetBookingById(GetBookingByIdRequest) returns (Booking);
+  rpc GetBookings(GetBookingsRequest) returns (GetBookingsResponse);
+  rpc UpdateBooking(UpdateBookingRequest) returns (Booking);
+  rpc CancelBooking(CancelBookingRequest) returns (CancelBookingResponse);
+
+
+  rpc CheckWorkplaceAvailability(CheckAvailabilityRequest) returns (CheckAvailabilityResponse);
+
+
+
+  rpc CheckParkingAvailability(CheckAvailabilityRequest) returns (CheckAvailabilityResponse);
+}
+message Booking {
+  int32 id = 1;
+  int32 user_id = 2; // ID пользователя, сделавшего бронирование
+  int32 resource_id = 3; // ID рабочего места или парковочного места
+  google.protobuf.Timestamp start_time = 4; // Время начала бронирования
+  google.protobuf.Timestamp end_time = 5; // Время окончания бронирования
+  string status = 6; // Статус бронирования (например, active, cancelled)
+
+  google.protobuf.Timestamp created_at = 8;
+  google.protobuf.Timestamp updated_at = 9;
+}
+
+message CreateBookingRequest {
+  int32 user_id = 1;
+  int32 resource_id = 2;
+  google.protobuf.Timestamp start_time = 3;
+  google.protobuf.Timestamp end_time = 4;
+  string status = 5;
+  string resource_type = 6;  // Тип ресурса бронирования (workplace, parking space)
+}
+
+message GetBookingByIdRequest {
+  int32 id = 1;
+  string resource_type = 2;
+}
+
+message GetBookingsRequest {
+  int32 user_id = 1; // Фильтр по пользователю (опционально)
+  int32 resource_id = 2; // Фильтр по ресурсу (опционально)
+  string resource_type = 3;
+  google.protobuf.Timestamp start_time = 4; // Фильтр по времени начала (опционально)
+  google.protobuf.Timestamp end_time = 5; // Фильтр по времени окончания (опционально)
+}
+
+message GetBookingsResponse {
+  repeated Booking bookings = 1;
+}
+
+// Обновление существующего бронирования
+message UpdateBookingRequest {
+  int32 id = 1; // ID бронирования
+  google.protobuf.Timestamp start_time = 2;
+  google.protobuf.Timestamp end_time = 3;
+  string status = 4;
+  string resource_type = 5;
+}
+
+// Отмена бронирования
+message CancelBookingRequest {
+  int32 id = 1; // ID бронирования
+  string resource_type =2;
+}
+
+
+message CancelBookingResponse {
+  bool success = 1;
+}
+
+// Проверка доступности ресурса для указанного времени
+message CheckAvailabilityRequest {
+  int32 resource_id = 1;
+  string resource_type = 2;
+  google.protobuf.Timestamp start_time = 3;
+  google.protobuf.Timestamp end_time = 4;
+}
+
+message CheckAvailabilityResponse {
+  bool is_available = 1;
+}
+
+service ResourceService {
+
+  rpc GetWorkplaces(GetWorkplacesRequest) returns (GetWorkplacesResponse);
+  rpc GetWorkplaceById(GetWorkplaceByIdRequest) returns (Workplace);
+  rpc GetWorkplaceByUniqueTag(GetWorkplaceByUniqueTagRequest) returns (Workplace);
+  rpc CreateWorkplace(CreateWorkplaceRequest) returns (Workplace);
+  rpc UpdateWorkplace(UpdateWorkplaceRequest) returns (Workplace);
+  rpc DeleteWorkplace(DeleteWorkplaceRequest) returns (DeleteWorkplaceResponse);
+
+
+
+  rpc GetParkingSpaces(GetParkingSpacesRequest) returns (GetParkingSpacesResponse);
+  rpc GetParkingSpaceById(GetParkingSpaceByIdRequest) returns (ParkingSpace);
+  rpc CreateParkingSpace(CreateParkingSpaceRequest) returns (ParkingSpace);
+  rpc UpdateParkingSpace(UpdateParkingSpaceRequest) returns (ParkingSpace);
+  rpc DeleteParkingSpace(DeleteParkingSpaceRequest) returns (DeleteParkingSpaceResponse);
+
+
+
+  rpc GetItems(GetItemsRequest) returns (GetItemsResponse);
+  rpc GetItemById(GetItemByIdRequest) returns (Item);
+  rpc CreateItem(CreateItemRequest) returns (Item);
+  rpc UpdateItem(UpdateItemRequest) returns (Item);
+  rpc DeleteItem(DeleteItemRequest) returns (DeleteItemResponse);
+  rpc AttachItemToWorkplace(AttachItemToWorkplaceRequest) returns (Item);
+}
+
+// Сообщения для рабочих мест
+message Workplace {
+  int64 id = 1;
+  string address = 2;
+  string zone = 3;
+  int64 floor = 4;
+  int64 number = 5;
+  string type = 6;
+  int64 capacity = 7;
+  string description = 8;
+  bool is_available = 9;
+  string maintenance_status = 10;
+  google.protobuf.Timestamp created_at = 11;
+  google.protobuf.Timestamp updated_at = 12;
+  repeated Item items = 13;
+  string unique_tag = 14;
+}
+
+message GetWorkplacesRequest {
+  string zone = 1;
+  int64 floor = 2;
+  string type = 3;
+  int64 capacity = 4;
+  bool is_available = 5;
+  int64 page = 6;
+}
+
+message GetWorkplacesResponse {
+  repeated Workplace workplaces = 1;
+  int64 total_count = 2;
+  int64 page = 3;
+  int64 page_size = 4;
+}
+
+message GetWorkplaceByIdRequest {
+  int64 id = 1;
+}
+
+message GetWorkplaceByUniqueTagRequest {
+  string unique_tag = 1;
+}
+message CreateWorkplaceRequest {
+  string address = 1;
+  string zone = 2;
+  int64 floor = 3;
+  int64 number = 4;
+  string type = 5;
+  int64 capacity = 6;
+  string description = 7;
+  bool is_available = 8;
+  string maintenance_status = 9;
+}
+
+message UpdateWorkplaceRequest {
+  int64 id = 1;
+  string address = 2;
+  string zone = 3;
+  int64 floor = 4;
+  int64 number = 5;
+  string type = 6;
+  int64 capacity = 7;
+  string description = 8;
+  bool is_available = 9;
+  string maintenance_status = 10;
+}
+
+message DeleteWorkplaceRequest {
+  int64 id = 1;
+}
+
+message DeleteWorkplaceResponse {
+  bool success = 1;
+  string message = 2;
+}
+
+
+message TimeSlot {
+  google.protobuf.Timestamp start_time = 1;
+  google.protobuf.Timestamp end_time = 2;
+  string reason = 3;
+}
+
+// Сообщения для парковочных мест
+message ParkingSpace {
+  int64 id = 1;
+  int64 number = 2;
+  string address = 3;
+  string zone = 4;
+  string type = 5;
+  bool is_available = 6;
+  google.protobuf.Timestamp created_at = 7;
+  google.protobuf.Timestamp updated_at = 8;
+}
+
+message GetParkingSpacesRequest {
+  string address = 1;
+  string zone =2;
+  string type = 3;
+  int64 number = 4;
+  bool is_available = 5;
+  int64 page = 6;
+}
+
+message GetParkingSpacesResponse {
+  repeated ParkingSpace parking_spaces = 1;
+  int64 total_count = 2;
+  int64 page = 3;
+  int64 page_size = 4;
+}
+
+message GetParkingSpaceByIdRequest {
+  int64 id = 1;
+}
+
+message CreateParkingSpaceRequest {
+  int64 number = 1;
+  string address = 2;
+  string type = 3;
+  string zone = 4;
+  bool is_available = 5;
+}
+
+message UpdateParkingSpaceRequest {
+  int64 id = 1;
+  int64 number = 2;
+  string address = 3;
+  string zone = 4;
+  string type = 5;
+  bool is_available = 6;
+}
+
+message DeleteParkingSpaceRequest {
+  int64 id = 1;
+}
+
+message DeleteParkingSpaceResponse {
+  bool success = 1;
+  string message = 2;
+}
+
+
+// Сообщения для предметов
+message Item {
+  int64 id = 1;
+  string type = 2;
+  string name = 3;
+  string condition = 4;
+  int64 workplace_id = 5;
+  google.protobuf.Timestamp created_at = 6;
+  google.protobuf.Timestamp updated_at = 7;
+}
+
+message ItemCondition {
+  int64 id = 1;
+  string value = 2;
+  string description = 3;
+}
+
+message GetItemsRequest {
+  string type = 1;
+  string name = 2;
+  int64 condition_id = 3;
+  int64 workplace_id = 4;
+  int64 page = 5;
+}
+
+message GetItemsResponse {
+  repeated Item items = 1;
+  int64 total_count = 2;
+  int64 page = 3;
+  int64 page_size = 4;
+}
+
+message GetItemByIdRequest {
+  int64 id = 1;
+}
+
+message CreateItemRequest {
+  string type = 1;
+  string name = 2;
+  int64 condition_id = 3;
+  int64 workplace_id = 4;
+}
+
+message UpdateItemRequest {
+  int64 id = 1;
+  string type = 2;
+  string name = 3;
+  int64 condition_id = 4;
+  int64 workplace_id = 5;
+}
+
+message DeleteItemRequest {
+  int64 id = 1;
+}
+
+message DeleteItemResponse {
+  bool success = 1;
+  string message = 2;
+}
+
+message AttachItemToWorkplaceRequest {
+  int64 item_id = 1;
+  int64 workplace_id = 2;
+}
