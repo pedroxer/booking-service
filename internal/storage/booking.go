@@ -98,7 +98,7 @@ func (s *Storage) GetBookings(ctx context.Context, filters []Field, bookingType 
 	if bookingType == utills.WorkplaceType {
 		bookingFileds = bookingFileds[0 : len(bookingColumnsFields)-1]
 		delete(bookingColumnsFields, "workplace_id")
-	} else {
+	} else if bookingType == utills.ParkingType {
 		bookingFileds = bookingFileds[0 : len(bookingColumnsFields)-1]
 		delete(bookingColumnsFields, "parking_space_id")
 	}
@@ -163,7 +163,7 @@ func (s *Storage) CreateBooking(ctx context.Context, bookingType, status string,
 	query := `INSERT INTO `
 	if bookingType == utills.WorkplaceType {
 		query += "booking_service.booking (user_id, workplace_id, start_date, end_date, status, created_at, updated_at) "
-	} else {
+	} else if bookingType == utills.ParkingType {
 		query += "booking_service.parking_bookings (user_id, parking_space_id, start_date, end_date, status, created_at, updated_at) "
 	}
 	query += " VALUES ($1, $2, $3, $4, $5, $6, $7) RETURNING *"
@@ -256,7 +256,7 @@ func (s *Storage) GetTimeSlotsForResource(ctx context.Context, bookingType strin
 	query := `SELECT start_date, end_date FROM `
 	if bookingType == utills.WorkplaceType {
 		query += "booking_service.booking WHERE workplace_id = $1 "
-	} else {
+	} else if bookingType == utills.ParkingType {
 		query += "booking_service.parking_bookings WHERE parking_space_id = $1 "
 	}
 	query += "AND start_date >= $2 AND end_date <= $3 ORDER BY start_date"

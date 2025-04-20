@@ -67,7 +67,7 @@ func (b BookingService) GetBookings(ctx context.Context, bookingType string, sta
 				Value: resourceID,
 			})
 		}
-	} else {
+	} else if bookingType == utills.ParkingType {
 		if resourceID != 0 {
 			filters = append(filters, storage.Field{
 				Name:  "parking_space_id",
@@ -113,7 +113,7 @@ func (b BookingService) CreateBooking(ctx context.Context, bookingType, status s
 			return models.Booking{}, err
 		}
 		resourceAvailable = workplace.IsAvailable
-	} else {
+	} else if bookingType == utills.ParkingType {
 		parking, err := b.resourceClient.GetParkingSpaceById(ctx, &proto_gen.GetParkingSpaceByIdRequest{
 			Id: resourceId,
 		})
@@ -139,7 +139,7 @@ func (b BookingService) CreateBooking(ctx context.Context, bookingType, status s
 			Id:          resourceId,
 			IsAvailable: false,
 		})
-	} else {
+	} else if bookingType == utills.ParkingType {
 		_, err = b.resourceClient.UpdateParkingSpace(ctx, &proto_gen.UpdateParkingSpaceRequest{
 			Id:          resourceId,
 			IsAvailable: false,
@@ -191,7 +191,7 @@ func (b BookingService) CancelBooking(ctx context.Context, bookingType string, b
 			Id:          booking.ResourceId,
 			IsAvailable: true,
 		})
-	} else {
+	} else if bookingType == utills.ParkingType {
 		_, err = b.resourceClient.UpdateParkingSpace(ctx, &proto_gen.UpdateParkingSpaceRequest{
 			Id:          booking.ResourceId,
 			IsAvailable: true,
