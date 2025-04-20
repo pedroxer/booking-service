@@ -1,0 +1,109 @@
+syntax="proto3";
+
+package BookingService;
+
+option go_package = "github.com/pedroxer/booking-service/internal/proto_gen";
+
+
+import "google/protobuf/timestamp.proto";
+
+
+service BookingService{
+  rpc CreateBooking(CreateBookingRequest) returns (Booking);
+  rpc GetBookingById(GetBookingByIdRequest) returns (Booking);
+  rpc GetBookings(GetBookingsRequest) returns (GetBookingsResponse);
+  rpc UpdateBooking(UpdateBookingRequest) returns (Booking);
+  rpc CancelBooking(CancelBookingRequest) returns (CancelBookingResponse);
+  rpc ApproveByQRBooking(ApproveByQRBookingRequest) returns (ApproveByQRBookingResponse);
+  rpc GetSlotsToBooking(GetSlotsToBookingRequest) returns (GetSlotsToBookingResponse);
+
+
+}
+message Booking {
+  int64 id = 1;
+  int64 user_id = 2; // ID пользователя, сделавшего бронирование
+  int64 resource_id = 3; // ID рабочего места или парковочного места
+  google.protobuf.Timestamp start_time = 4; // Время начала бронирования
+  google.protobuf.Timestamp end_time = 5; // Время окончания бронирования
+  string status = 6; // Статус бронирования (например, active, cancelled, pending)
+
+  google.protobuf.Timestamp created_at = 8;
+  google.protobuf.Timestamp updated_at = 9;
+}
+
+message CreateBookingRequest {
+  int64 user_id = 1;
+  int64 resource_id = 2;
+  google.protobuf.Timestamp start_time = 3;
+  google.protobuf.Timestamp end_time = 4;
+  string booking_type = 5;  // Тип ресурса бронирования (workplace, parking space)
+}
+
+message GetBookingByIdRequest {
+  int64 id = 1;
+  string booking_type = 2;
+}
+
+message GetBookingsRequest {
+  int64 user_id = 1; // Фильтр по пользователю (опционально)
+  int64 resource_id = 2; // Фильтр по ресурсу (опционально)
+  string booking_type = 3;
+  google.protobuf.Timestamp start_time = 4; // Фильтр по времени начала (опционально)
+  google.protobuf.Timestamp end_time = 5;// Фильтр по времени окончания (опционально)
+  int64 page = 6;
+
+}
+
+message GetBookingsResponse {
+  repeated Booking bookings = 1;
+  int64 page = 2;
+  int64 total_count = 3;
+  int64 page_size = 4;
+}
+
+// Обновление существующего бронирования
+message UpdateBookingRequest {
+  int64 id = 1; // ID бронирования
+  google.protobuf.Timestamp start_time = 2;
+  google.protobuf.Timestamp end_time = 3;
+  string status = 4;
+  string booking_type = 5;
+}
+
+// Отмена бронирования
+message CancelBookingRequest {
+  int64 id = 1; // ID бронирования
+  string booking_type =2;
+}
+
+
+message CancelBookingResponse {
+  bool success = 1;
+}
+
+// Проверка доступности ресурса для указанного времени
+
+message ApproveByQRBookingRequest{
+  string unique_tag = 1;
+
+}
+
+message ApproveByQRBookingResponse{
+  bool success = 1;
+}
+
+message GetSlotsToBookingRequest{
+  int64 resource_id = 1;
+  string booking_type = 2;
+  google.protobuf.Timestamp date = 3;
+}
+
+message TimeSlot{
+  google.protobuf.Timestamp start_time = 1;
+  google.protobuf.Timestamp end_time = 2;
+  bool busy = 3;
+}
+
+message GetSlotsToBookingResponse{
+   repeated TimeSlot slots = 1;
+}

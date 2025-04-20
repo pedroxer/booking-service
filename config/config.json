@@ -1,9 +1,13 @@
 {
   "port": 8080,
   "postgres": {
-    "host": "localhost",
+    "host": "host.docker.internal",
     "port": 5432,
     "db": "booking",
     "sslmode": "disable"
+  },
+  "resource_service": {
+    "host": "host.docker.internal",
+    "port": 8081
   }
 }
