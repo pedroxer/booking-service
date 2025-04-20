@@ -1,96 +1,11 @@
 syntax="proto3";
 
-package BookingService;
+package ResourceService;
 
 option go_package = "github.com/pedroxer/booking-service/internal/proto_gen";
 
 
 import "google/protobuf/timestamp.proto";
-
-
-service BookingService{
-  rpc CreateBooking(CreateBookingRequest) returns (Booking);
-  rpc GetBookingById(GetBookingByIdRequest) returns (Booking);
-  rpc GetBookings(GetBookingsRequest) returns (GetBookingsResponse);
-  rpc UpdateBooking(UpdateBookingRequest) returns (Booking);
-  rpc CancelBooking(CancelBookingRequest) returns (CancelBookingResponse);
-
-
-  rpc CheckWorkplaceAvailability(CheckAvailabilityRequest) returns (CheckAvailabilityResponse);
-
-
-
-  rpc CheckParkingAvailability(CheckAvailabilityRequest) returns (CheckAvailabilityResponse);
-}
-message Booking {
-  int32 id = 1;
-  int32 user_id = 2; // ID пользователя, сделавшего бронирование
-  int32 resource_id = 3; // ID рабочего места или парковочного места
-  google.protobuf.Timestamp start_time = 4; // Время начала бронирования
-  google.protobuf.Timestamp end_time = 5; // Время окончания бронирования
-  string status = 6; // Статус бронирования (например, active, cancelled)
-
-  google.protobuf.Timestamp created_at = 8;
-  google.protobuf.Timestamp updated_at = 9;
-}
-
-message CreateBookingRequest {
-  int32 user_id = 1;
-  int32 resource_id = 2;
-  google.protobuf.Timestamp start_time = 3;
-  google.protobuf.Timestamp end_time = 4;
-  string status = 5;
-  string resource_type = 6;  // Тип ресурса бронирования (workplace, parking space)
-}
-
-message GetBookingByIdRequest {
-  int32 id = 1;
-  string resource_type = 2;
-}
-
-message GetBookingsRequest {
-  int32 user_id = 1; // Фильтр по пользователю (опционально)
-  int32 resource_id = 2; // Фильтр по ресурсу (опционально)
-  string resource_type = 3;
-  google.protobuf.Timestamp start_time = 4; // Фильтр по времени начала (опционально)
-  google.protobuf.Timestamp end_time = 5; // Фильтр по времени окончания (опционально)
-}
-
-message GetBookingsResponse {
-  repeated Booking bookings = 1;
-}
-
-// Обновление существующего бронирования
-message UpdateBookingRequest {
-  int32 id = 1; // ID бронирования
-  google.protobuf.Timestamp start_time = 2;
-  google.protobuf.Timestamp end_time = 3;
-  string status = 4;
-  string resource_type = 5;
-}
-
-// Отмена бронирования
-message CancelBookingRequest {
-  int32 id = 1; // ID бронирования
-  string resource_type =2;
-}
-
-
-message CancelBookingResponse {
-  bool success = 1;
-}
-
-// Проверка доступности ресурса для указанного времени
-message CheckAvailabilityRequest {
-  int32 resource_id = 1;
-  string resource_type = 2;
-  google.protobuf.Timestamp start_time = 3;
-  google.protobuf.Timestamp end_time = 4;
-}
-
-message CheckAvailabilityResponse {
-  bool is_available = 1;
-}
 
 service ResourceService {
 
@@ -143,7 +58,8 @@ message GetWorkplacesRequest {
   string type = 3;
   int64 capacity = 4;
   bool is_available = 5;
-  int64 page = 6;
+  bool with_items = 6;
+  int64 page = 7;
 }
 
 message GetWorkplacesResponse {
@@ -195,11 +111,7 @@ message DeleteWorkplaceResponse {
 }
 
 
-message TimeSlot {
-  google.protobuf.Timestamp start_time = 1;
-  google.protobuf.Timestamp end_time = 2;
-  string reason = 3;
-}
+
 
 // Сообщения для парковочных мест
 message ParkingSpace {

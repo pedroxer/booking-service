@@ -3,13 +3,17 @@ package main
 import (
 	"encoding/json"
 	"github.com/caarlos0/env/v6"
+	"github.com/pedroxer/booking-service/internal/app"
+	"github.com/pedroxer/booking-service/internal/config"
+	"github.com/pedroxer/booking-service/internal/storage"
+	"github.com/pedroxer/booking-service/internal/utills"
 	log "github.com/sirupsen/logrus"
 	"os"
 )
 
 func main() {
-	logger := setupLogger()
-	data, err := os.ReadFile("./configs/config.json")
+	log := setupLogger()
+	data, err := os.ReadFile("./config/config.json")
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -27,8 +31,12 @@ func main() {
 		log.Fatalf("failed connect to db %s", err)
 	}
 	log.Info("connected to db")
-
-	app := app.NewApp(log, cfg.Port, store)
+	resourceClient, err := utills.CreateResourceClient(cfg.ResourceService)
+	if err != nil {
+		log.Fatal("failed to create resource client ", err)
+	}
+	log.Info("connected to resource service")
+	app := app.NewApp(log, cfg.Port, store, resourceClient)
 	if err := app.GRPCSrv.Run(); err != nil {
 		log.Fatal(err)
 	}

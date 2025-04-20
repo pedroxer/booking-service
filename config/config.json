@@ -5,5 +5,9 @@
     "port": 5432,
     "db": "booking",
     "sslmode": "disable"
+  },
+  "resource_service": {
+    "host": "localhost",
+    "port": 8081
   }
 }

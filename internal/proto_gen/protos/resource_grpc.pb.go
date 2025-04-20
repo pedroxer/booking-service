@@ -2,7 +2,7 @@
 // versions:
 // - protoc-gen-go-grpc v1.2.0
 // - protoc             v5.28.2
-// source: booking.proto
+// source: protos/resource.proto
 
 package proto_gen
 
@@ -17,308 +17,6 @@ import (
 // is compatible with the grpc package it is being compiled against.
 // Requires gRPC-Go v1.32.0 or later.
 const _ = grpc.SupportPackageIsVersion7
-
-// BookingServiceClient is the client API for BookingService service.
-//
-// For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
-type BookingServiceClient interface {
-	CreateBooking(ctx context.Context, in *CreateBookingRequest, opts ...grpc.CallOption) (*Booking, error)
-	GetBookingById(ctx context.Context, in *GetBookingByIdRequest, opts ...grpc.CallOption) (*Booking, error)
-	GetBookings(ctx context.Context, in *GetBookingsRequest, opts ...grpc.CallOption) (*GetBookingsResponse, error)
-	UpdateBooking(ctx context.Context, in *UpdateBookingRequest, opts ...grpc.CallOption) (*Booking, error)
-	CancelBooking(ctx context.Context, in *CancelBookingRequest, opts ...grpc.CallOption) (*CancelBookingResponse, error)
-	CheckWorkplaceAvailability(ctx context.Context, in *CheckAvailabilityRequest, opts ...grpc.CallOption) (*CheckAvailabilityResponse, error)
-	CheckParkingAvailability(ctx context.Context, in *CheckAvailabilityRequest, opts ...grpc.CallOption) (*CheckAvailabilityResponse, error)
-}
-
-type bookingServiceClient struct {
-	cc grpc.ClientConnInterface
-}
-
-func NewBookingServiceClient(cc grpc.ClientConnInterface) BookingServiceClient {
-	return &bookingServiceClient{cc}
-}
-
-func (c *bookingServiceClient) CreateBooking(ctx context.Context, in *CreateBookingRequest, opts ...grpc.CallOption) (*Booking, error) {
-	out := new(Booking)
-	err := c.cc.Invoke(ctx, "/BookingService.BookingService/CreateBooking", in, out, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
-func (c *bookingServiceClient) GetBookingById(ctx context.Context, in *GetBookingByIdRequest, opts ...grpc.CallOption) (*Booking, error) {
-	out := new(Booking)
-	err := c.cc.Invoke(ctx, "/BookingService.BookingService/GetBookingById", in, out, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
-func (c *bookingServiceClient) GetBookings(ctx context.Context, in *GetBookingsRequest, opts ...grpc.CallOption) (*GetBookingsResponse, error) {
-	out := new(GetBookingsResponse)
-	err := c.cc.Invoke(ctx, "/BookingService.BookingService/GetBookings", in, out, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
-func (c *bookingServiceClient) UpdateBooking(ctx context.Context, in *UpdateBookingRequest, opts ...grpc.CallOption) (*Booking, error) {
-	out := new(Booking)
-	err := c.cc.Invoke(ctx, "/BookingService.BookingService/UpdateBooking", in, out, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
-func (c *bookingServiceClient) CancelBooking(ctx context.Context, in *CancelBookingRequest, opts ...grpc.CallOption) (*CancelBookingResponse, error) {
-	out := new(CancelBookingResponse)
-	err := c.cc.Invoke(ctx, "/BookingService.BookingService/CancelBooking", in, out, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
-func (c *bookingServiceClient) CheckWorkplaceAvailability(ctx context.Context, in *CheckAvailabilityRequest, opts ...grpc.CallOption) (*CheckAvailabilityResponse, error) {
-	out := new(CheckAvailabilityResponse)
-	err := c.cc.Invoke(ctx, "/BookingService.BookingService/CheckWorkplaceAvailability", in, out, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
-func (c *bookingServiceClient) CheckParkingAvailability(ctx context.Context, in *CheckAvailabilityRequest, opts ...grpc.CallOption) (*CheckAvailabilityResponse, error) {
-	out := new(CheckAvailabilityResponse)
-	err := c.cc.Invoke(ctx, "/BookingService.BookingService/CheckParkingAvailability", in, out, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
-// BookingServiceServer is the server API for BookingService service.
-// All implementations must embed UnimplementedBookingServiceServer
-// for forward compatibility
-type BookingServiceServer interface {
-	CreateBooking(context.Context, *CreateBookingRequest) (*Booking, error)
-	GetBookingById(context.Context, *GetBookingByIdRequest) (*Booking, error)
-	GetBookings(context.Context, *GetBookingsRequest) (*GetBookingsResponse, error)
-	UpdateBooking(context.Context, *UpdateBookingRequest) (*Booking, error)
-	CancelBooking(context.Context, *CancelBookingRequest) (*CancelBookingResponse, error)
-	CheckWorkplaceAvailability(context.Context, *CheckAvailabilityRequest) (*CheckAvailabilityResponse, error)
-	CheckParkingAvailability(context.Context, *CheckAvailabilityRequest) (*CheckAvailabilityResponse, error)
-	mustEmbedUnimplementedBookingServiceServer()
-}
-
-// UnimplementedBookingServiceServer must be embedded to have forward compatible implementations.
-type UnimplementedBookingServiceServer struct {
-}
-
-func (UnimplementedBookingServiceServer) CreateBooking(context.Context, *CreateBookingRequest) (*Booking, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method CreateBooking not implemented")
-}
-func (UnimplementedBookingServiceServer) GetBookingById(context.Context, *GetBookingByIdRequest) (*Booking, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method GetBookingById not implemented")
-}
-func (UnimplementedBookingServiceServer) GetBookings(context.Context, *GetBookingsRequest) (*GetBookingsResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method GetBookings not implemented")
-}
-func (UnimplementedBookingServiceServer) UpdateBooking(context.Context, *UpdateBookingRequest) (*Booking, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method UpdateBooking not implemented")
-}
-func (UnimplementedBookingServiceServer) CancelBooking(context.Context, *CancelBookingRequest) (*CancelBookingResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method CancelBooking not implemented")
-}
-func (UnimplementedBookingServiceServer) CheckWorkplaceAvailability(context.Context, *CheckAvailabilityRequest) (*CheckAvailabilityResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method CheckWorkplaceAvailability not implemented")
-}
-func (UnimplementedBookingServiceServer) CheckParkingAvailability(context.Context, *CheckAvailabilityRequest) (*CheckAvailabilityResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method CheckParkingAvailability not implemented")
-}
-func (UnimplementedBookingServiceServer) mustEmbedUnimplementedBookingServiceServer() {}
-
-// UnsafeBookingServiceServer may be embedded to opt out of forward compatibility for this service.
-// Use of this interface is not recommended, as added methods to BookingServiceServer will
-// result in compilation errors.
-type UnsafeBookingServiceServer interface {
-	mustEmbedUnimplementedBookingServiceServer()
-}
-
-func RegisterBookingServiceServer(s grpc.ServiceRegistrar, srv BookingServiceServer) {
-	s.RegisterService(&BookingService_ServiceDesc, srv)
-}
-
-func _BookingService_CreateBooking_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(CreateBookingRequest)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(BookingServiceServer).CreateBooking(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: "/BookingService.BookingService/CreateBooking",
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(BookingServiceServer).CreateBooking(ctx, req.(*CreateBookingRequest))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
-func _BookingService_GetBookingById_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(GetBookingByIdRequest)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(BookingServiceServer).GetBookingById(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: "/BookingService.BookingService/GetBookingById",
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(BookingServiceServer).GetBookingById(ctx, req.(*GetBookingByIdRequest))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
-func _BookingService_GetBookings_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(GetBookingsRequest)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(BookingServiceServer).GetBookings(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: "/BookingService.BookingService/GetBookings",
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(BookingServiceServer).GetBookings(ctx, req.(*GetBookingsRequest))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
-func _BookingService_UpdateBooking_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(UpdateBookingRequest)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(BookingServiceServer).UpdateBooking(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: "/BookingService.BookingService/UpdateBooking",
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(BookingServiceServer).UpdateBooking(ctx, req.(*UpdateBookingRequest))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
-func _BookingService_CancelBooking_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(CancelBookingRequest)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(BookingServiceServer).CancelBooking(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: "/BookingService.BookingService/CancelBooking",
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(BookingServiceServer).CancelBooking(ctx, req.(*CancelBookingRequest))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
-func _BookingService_CheckWorkplaceAvailability_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(CheckAvailabilityRequest)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(BookingServiceServer).CheckWorkplaceAvailability(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: "/BookingService.BookingService/CheckWorkplaceAvailability",
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(BookingServiceServer).CheckWorkplaceAvailability(ctx, req.(*CheckAvailabilityRequest))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
-func _BookingService_CheckParkingAvailability_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(CheckAvailabilityRequest)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(BookingServiceServer).CheckParkingAvailability(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: "/BookingService.BookingService/CheckParkingAvailability",
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(BookingServiceServer).CheckParkingAvailability(ctx, req.(*CheckAvailabilityRequest))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
-// BookingService_ServiceDesc is the grpc.ServiceDesc for BookingService service.
-// It's only intended for direct use with grpc.RegisterService,
-// and not to be introspected or modified (even as a copy)
-var BookingService_ServiceDesc = grpc.ServiceDesc{
-	ServiceName: "BookingService.BookingService",
-	HandlerType: (*BookingServiceServer)(nil),
-	Methods: []grpc.MethodDesc{
-		{
-			MethodName: "CreateBooking",
-			Handler:    _BookingService_CreateBooking_Handler,
-		},
-		{
-			MethodName: "GetBookingById",
-			Handler:    _BookingService_GetBookingById_Handler,
-		},
-		{
-			MethodName: "GetBookings",
-			Handler:    _BookingService_GetBookings_Handler,
-		},
-		{
-			MethodName: "UpdateBooking",
-			Handler:    _BookingService_UpdateBooking_Handler,
-		},
-		{
-			MethodName: "CancelBooking",
-			Handler:    _BookingService_CancelBooking_Handler,
-		},
-		{
-			MethodName: "CheckWorkplaceAvailability",
-			Handler:    _BookingService_CheckWorkplaceAvailability_Handler,
-		},
-		{
-			MethodName: "CheckParkingAvailability",
-			Handler:    _BookingService_CheckParkingAvailability_Handler,
-		},
-	},
-	Streams:  []grpc.StreamDesc{},
-	Metadata: "booking.proto",
-}
 
 // ResourceServiceClient is the client API for ResourceService service.
 //
@@ -353,7 +51,7 @@ func NewResourceServiceClient(cc grpc.ClientConnInterface) ResourceServiceClient
 
 func (c *resourceServiceClient) GetWorkplaces(ctx context.Context, in *GetWorkplacesRequest, opts ...grpc.CallOption) (*GetWorkplacesResponse, error) {
 	out := new(GetWorkplacesResponse)
-	err := c.cc.Invoke(ctx, "/BookingService.ResourceService/GetWorkplaces", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/ResourceService.ResourceService/GetWorkplaces", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -362,7 +60,7 @@ func (c *resourceServiceClient) GetWorkplaces(ctx context.Context, in *GetWorkpl
 
 func (c *resourceServiceClient) GetWorkplaceById(ctx context.Context, in *GetWorkplaceByIdRequest, opts ...grpc.CallOption) (*Workplace, error) {
 	out := new(Workplace)
-	err := c.cc.Invoke(ctx, "/BookingService.ResourceService/GetWorkplaceById", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/ResourceService.ResourceService/GetWorkplaceById", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -371,7 +69,7 @@ func (c *resourceServiceClient) GetWorkplaceById(ctx context.Context, in *GetWor
 
 func (c *resourceServiceClient) GetWorkplaceByUniqueTag(ctx context.Context, in *GetWorkplaceByUniqueTagRequest, opts ...grpc.CallOption) (*Workplace, error) {
 	out := new(Workplace)
-	err := c.cc.Invoke(ctx, "/BookingService.ResourceService/GetWorkplaceByUniqueTag", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/ResourceService.ResourceService/GetWorkplaceByUniqueTag", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -380,7 +78,7 @@ func (c *resourceServiceClient) GetWorkplaceByUniqueTag(ctx context.Context, in 
 
 func (c *resourceServiceClient) CreateWorkplace(ctx context.Context, in *CreateWorkplaceRequest, opts ...grpc.CallOption) (*Workplace, error) {
 	out := new(Workplace)
-	err := c.cc.Invoke(ctx, "/BookingService.ResourceService/CreateWorkplace", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/ResourceService.ResourceService/CreateWorkplace", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -389,7 +87,7 @@ func (c *resourceServiceClient) CreateWorkplace(ctx context.Context, in *CreateW
 
 func (c *resourceServiceClient) UpdateWorkplace(ctx context.Context, in *UpdateWorkplaceRequest, opts ...grpc.CallOption) (*Workplace, error) {
 	out := new(Workplace)
-	err := c.cc.Invoke(ctx, "/BookingService.ResourceService/UpdateWorkplace", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/ResourceService.ResourceService/UpdateWorkplace", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -398,7 +96,7 @@ func (c *resourceServiceClient) UpdateWorkplace(ctx context.Context, in *UpdateW
 
 func (c *resourceServiceClient) DeleteWorkplace(ctx context.Context, in *DeleteWorkplaceRequest, opts ...grpc.CallOption) (*DeleteWorkplaceResponse, error) {
 	out := new(DeleteWorkplaceResponse)
-	err := c.cc.Invoke(ctx, "/BookingService.ResourceService/DeleteWorkplace", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/ResourceService.ResourceService/DeleteWorkplace", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -407,7 +105,7 @@ func (c *resourceServiceClient) DeleteWorkplace(ctx context.Context, in *DeleteW
 
 func (c *resourceServiceClient) GetParkingSpaces(ctx context.Context, in *GetParkingSpacesRequest, opts ...grpc.CallOption) (*GetParkingSpacesResponse, error) {
 	out := new(GetParkingSpacesResponse)
-	err := c.cc.Invoke(ctx, "/BookingService.ResourceService/GetParkingSpaces", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/ResourceService.ResourceService/GetParkingSpaces", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -416,7 +114,7 @@ func (c *resourceServiceClient) GetParkingSpaces(ctx context.Context, in *GetPar
 
 func (c *resourceServiceClient) GetParkingSpaceById(ctx context.Context, in *GetParkingSpaceByIdRequest, opts ...grpc.CallOption) (*ParkingSpace, error) {
 	out := new(ParkingSpace)
-	err := c.cc.Invoke(ctx, "/BookingService.ResourceService/GetParkingSpaceById", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/ResourceService.ResourceService/GetParkingSpaceById", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -425,7 +123,7 @@ func (c *resourceServiceClient) GetParkingSpaceById(ctx context.Context, in *Get
 
 func (c *resourceServiceClient) CreateParkingSpace(ctx context.Context, in *CreateParkingSpaceRequest, opts ...grpc.CallOption) (*ParkingSpace, error) {
 	out := new(ParkingSpace)
-	err := c.cc.Invoke(ctx, "/BookingService.ResourceService/CreateParkingSpace", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/ResourceService.ResourceService/CreateParkingSpace", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -434,7 +132,7 @@ func (c *resourceServiceClient) CreateParkingSpace(ctx context.Context, in *Crea
 
 func (c *resourceServiceClient) UpdateParkingSpace(ctx context.Context, in *UpdateParkingSpaceRequest, opts ...grpc.CallOption) (*ParkingSpace, error) {
 	out := new(ParkingSpace)
-	err := c.cc.Invoke(ctx, "/BookingService.ResourceService/UpdateParkingSpace", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/ResourceService.ResourceService/UpdateParkingSpace", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -443,7 +141,7 @@ func (c *resourceServiceClient) UpdateParkingSpace(ctx context.Context, in *Upda
 
 func (c *resourceServiceClient) DeleteParkingSpace(ctx context.Context, in *DeleteParkingSpaceRequest, opts ...grpc.CallOption) (*DeleteParkingSpaceResponse, error) {
 	out := new(DeleteParkingSpaceResponse)
-	err := c.cc.Invoke(ctx, "/BookingService.ResourceService/DeleteParkingSpace", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/ResourceService.ResourceService/DeleteParkingSpace", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -452,7 +150,7 @@ func (c *resourceServiceClient) DeleteParkingSpace(ctx context.Context, in *Dele
 
 func (c *resourceServiceClient) GetItems(ctx context.Context, in *GetItemsRequest, opts ...grpc.CallOption) (*GetItemsResponse, error) {
 	out := new(GetItemsResponse)
-	err := c.cc.Invoke(ctx, "/BookingService.ResourceService/GetItems", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/ResourceService.ResourceService/GetItems", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -461,7 +159,7 @@ func (c *resourceServiceClient) GetItems(ctx context.Context, in *GetItemsReques
 
 func (c *resourceServiceClient) GetItemById(ctx context.Context, in *GetItemByIdRequest, opts ...grpc.CallOption) (*Item, error) {
 	out := new(Item)
-	err := c.cc.Invoke(ctx, "/BookingService.ResourceService/GetItemById", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/ResourceService.ResourceService/GetItemById", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -470,7 +168,7 @@ func (c *resourceServiceClient) GetItemById(ctx context.Context, in *GetItemById
 
 func (c *resourceServiceClient) CreateItem(ctx context.Context, in *CreateItemRequest, opts ...grpc.CallOption) (*Item, error) {
 	out := new(Item)
-	err := c.cc.Invoke(ctx, "/BookingService.ResourceService/CreateItem", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/ResourceService.ResourceService/CreateItem", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -479,7 +177,7 @@ func (c *resourceServiceClient) CreateItem(ctx context.Context, in *CreateItemRe
 
 func (c *resourceServiceClient) UpdateItem(ctx context.Context, in *UpdateItemRequest, opts ...grpc.CallOption) (*Item, error) {
 	out := new(Item)
-	err := c.cc.Invoke(ctx, "/BookingService.ResourceService/UpdateItem", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/ResourceService.ResourceService/UpdateItem", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -488,7 +186,7 @@ func (c *resourceServiceClient) UpdateItem(ctx context.Context, in *UpdateItemRe
 
 func (c *resourceServiceClient) DeleteItem(ctx context.Context, in *DeleteItemRequest, opts ...grpc.CallOption) (*DeleteItemResponse, error) {
 	out := new(DeleteItemResponse)
-	err := c.cc.Invoke(ctx, "/BookingService.ResourceService/DeleteItem", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/ResourceService.ResourceService/DeleteItem", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -497,7 +195,7 @@ func (c *resourceServiceClient) DeleteItem(ctx context.Context, in *DeleteItemRe
 
 func (c *resourceServiceClient) AttachItemToWorkplace(ctx context.Context, in *AttachItemToWorkplaceRequest, opts ...grpc.CallOption) (*Item, error) {
 	out := new(Item)
-	err := c.cc.Invoke(ctx, "/BookingService.ResourceService/AttachItemToWorkplace", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/ResourceService.ResourceService/AttachItemToWorkplace", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -606,7 +304,7 @@ func _ResourceService_GetWorkplaces_Handler(srv interface{}, ctx context.Context
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/BookingService.ResourceService/GetWorkplaces",
+		FullMethod: "/ResourceService.ResourceService/GetWorkplaces",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(ResourceServiceServer).GetWorkplaces(ctx, req.(*GetWorkplacesRequest))
@@ -624,7 +322,7 @@ func _ResourceService_GetWorkplaceById_Handler(srv interface{}, ctx context.Cont
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/BookingService.ResourceService/GetWorkplaceById",
+		FullMethod: "/ResourceService.ResourceService/GetWorkplaceById",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(ResourceServiceServer).GetWorkplaceById(ctx, req.(*GetWorkplaceByIdRequest))
@@ -642,7 +340,7 @@ func _ResourceService_GetWorkplaceByUniqueTag_Handler(srv interface{}, ctx conte
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/BookingService.ResourceService/GetWorkplaceByUniqueTag",
+		FullMethod: "/ResourceService.ResourceService/GetWorkplaceByUniqueTag",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(ResourceServiceServer).GetWorkplaceByUniqueTag(ctx, req.(*GetWorkplaceByUniqueTagRequest))
@@ -660,7 +358,7 @@ func _ResourceService_CreateWorkplace_Handler(srv interface{}, ctx context.Conte
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/BookingService.ResourceService/CreateWorkplace",
+		FullMethod: "/ResourceService.ResourceService/CreateWorkplace",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(ResourceServiceServer).CreateWorkplace(ctx, req.(*CreateWorkplaceRequest))
@@ -678,7 +376,7 @@ func _ResourceService_UpdateWorkplace_Handler(srv interface{}, ctx context.Conte
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/BookingService.ResourceService/UpdateWorkplace",
+		FullMethod: "/ResourceService.ResourceService/UpdateWorkplace",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(ResourceServiceServer).UpdateWorkplace(ctx, req.(*UpdateWorkplaceRequest))
@@ -696,7 +394,7 @@ func _ResourceService_DeleteWorkplace_Handler(srv interface{}, ctx context.Conte
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/BookingService.ResourceService/DeleteWorkplace",
+		FullMethod: "/ResourceService.ResourceService/DeleteWorkplace",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(ResourceServiceServer).DeleteWorkplace(ctx, req.(*DeleteWorkplaceRequest))
@@ -714,7 +412,7 @@ func _ResourceService_GetParkingSpaces_Handler(srv interface{}, ctx context.Cont
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/BookingService.ResourceService/GetParkingSpaces",
+		FullMethod: "/ResourceService.ResourceService/GetParkingSpaces",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(ResourceServiceServer).GetParkingSpaces(ctx, req.(*GetParkingSpacesRequest))
@@ -732,7 +430,7 @@ func _ResourceService_GetParkingSpaceById_Handler(srv interface{}, ctx context.C
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/BookingService.ResourceService/GetParkingSpaceById",
+		FullMethod: "/ResourceService.ResourceService/GetParkingSpaceById",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(ResourceServiceServer).GetParkingSpaceById(ctx, req.(*GetParkingSpaceByIdRequest))
@@ -750,7 +448,7 @@ func _ResourceService_CreateParkingSpace_Handler(srv interface{}, ctx context.Co
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/BookingService.ResourceService/CreateParkingSpace",
+		FullMethod: "/ResourceService.ResourceService/CreateParkingSpace",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(ResourceServiceServer).CreateParkingSpace(ctx, req.(*CreateParkingSpaceRequest))
@@ -768,7 +466,7 @@ func _ResourceService_UpdateParkingSpace_Handler(srv interface{}, ctx context.Co
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/BookingService.ResourceService/UpdateParkingSpace",
+		FullMethod: "/ResourceService.ResourceService/UpdateParkingSpace",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(ResourceServiceServer).UpdateParkingSpace(ctx, req.(*UpdateParkingSpaceRequest))
@@ -786,7 +484,7 @@ func _ResourceService_DeleteParkingSpace_Handler(srv interface{}, ctx context.Co
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/BookingService.ResourceService/DeleteParkingSpace",
+		FullMethod: "/ResourceService.ResourceService/DeleteParkingSpace",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(ResourceServiceServer).DeleteParkingSpace(ctx, req.(*DeleteParkingSpaceRequest))
@@ -804,7 +502,7 @@ func _ResourceService_GetItems_Handler(srv interface{}, ctx context.Context, dec
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/BookingService.ResourceService/GetItems",
+		FullMethod: "/ResourceService.ResourceService/GetItems",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(ResourceServiceServer).GetItems(ctx, req.(*GetItemsRequest))
@@ -822,7 +520,7 @@ func _ResourceService_GetItemById_Handler(srv interface{}, ctx context.Context, 
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/BookingService.ResourceService/GetItemById",
+		FullMethod: "/ResourceService.ResourceService/GetItemById",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(ResourceServiceServer).GetItemById(ctx, req.(*GetItemByIdRequest))
@@ -840,7 +538,7 @@ func _ResourceService_CreateItem_Handler(srv interface{}, ctx context.Context, d
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/BookingService.ResourceService/CreateItem",
+		FullMethod: "/ResourceService.ResourceService/CreateItem",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(ResourceServiceServer).CreateItem(ctx, req.(*CreateItemRequest))
@@ -858,7 +556,7 @@ func _ResourceService_UpdateItem_Handler(srv interface{}, ctx context.Context, d
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/BookingService.ResourceService/UpdateItem",
+		FullMethod: "/ResourceService.ResourceService/UpdateItem",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(ResourceServiceServer).UpdateItem(ctx, req.(*UpdateItemRequest))
@@ -876,7 +574,7 @@ func _ResourceService_DeleteItem_Handler(srv interface{}, ctx context.Context, d
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/BookingService.ResourceService/DeleteItem",
+		FullMethod: "/ResourceService.ResourceService/DeleteItem",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(ResourceServiceServer).DeleteItem(ctx, req.(*DeleteItemRequest))
@@ -894,7 +592,7 @@ func _ResourceService_AttachItemToWorkplace_Handler(srv interface{}, ctx context
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/BookingService.ResourceService/AttachItemToWorkplace",
+		FullMethod: "/ResourceService.ResourceService/AttachItemToWorkplace",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(ResourceServiceServer).AttachItemToWorkplace(ctx, req.(*AttachItemToWorkplaceRequest))
@@ -906,7 +604,7 @@ func _ResourceService_AttachItemToWorkplace_Handler(srv interface{}, ctx context
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
 var ResourceService_ServiceDesc = grpc.ServiceDesc{
-	ServiceName: "BookingService.ResourceService",
+	ServiceName: "ResourceService.ResourceService",
 	HandlerType: (*ResourceServiceServer)(nil),
 	Methods: []grpc.MethodDesc{
 		{
@@ -979,5 +677,5 @@ var ResourceService_ServiceDesc = grpc.ServiceDesc{
 		},
 	},
 	Streams:  []grpc.StreamDesc{},
-	Metadata: "booking.proto",
+	Metadata: "protos/resource.proto",
 }
