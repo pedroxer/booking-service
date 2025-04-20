@@ -19,6 +19,6 @@ COPY . .
 
 COPY --from=builder /booking-service .
 
-EXPOSE 8081
+EXPOSE 8080
 
 CMD ["./booking-service"]
