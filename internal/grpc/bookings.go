@@ -14,9 +14,9 @@ import (
 )
 
 type BookingInterface interface {
-	GetBookings(ctx context.Context, bookingType string, startTime, endTime time.Time, userId, resourceID, page int64) ([]models.Booking, int64, error)
+	GetBookings(ctx context.Context, bookingType string, startTime, endTime time.Time, userId string, resourceID, page int64) ([]models.Booking, int64, error)
 	GetBookingById(ctx context.Context, bookingType string, bookingId int64) (models.Booking, error)
-	CreateBooking(ctx context.Context, bookingType, status string, startTime, endTime time.Time, userId, resourceId int64) (models.Booking, error)
+	CreateBooking(ctx context.Context, bookingType, status string, startTime, endTime time.Time, userId string, resourceId int64) (models.Booking, error)
 	UpdateBooking(ctx context.Context, bookingType, status string, bookingID int64, startTime, endTime time.Time) (models.Booking, error)
 	CancelBooking(ctx context.Context, bookingType string, bookingId int64) (bool, error)
 	ApproveBooking(ctx context.Context, uniqueTag string) (bool, error) // Только для workplace
@@ -34,7 +34,7 @@ func RegisterBookingServiceServer(server *grpc.Server, log *log.Logger, bookingS
 }
 
 func (b *bookingAPI) CreateBooking(ctx context.Context, req *proto_gen.CreateBookingRequest) (*proto_gen.Booking, error) {
-	if req.UserId == 0 {
+	if req.UserId == "" {
 		return nil, status.Error(codes.InvalidArgument, "user id is required")
 	}
 	if req.BookingType == "" {

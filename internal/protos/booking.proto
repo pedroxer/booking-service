@@ -21,7 +21,7 @@ service BookingService{
 }
 message Booking {
   int64 id = 1;
-  int64 user_id = 2; // ID пользователя, сделавшего бронирование
+  string user_id = 2; // ID пользователя, сделавшего бронирование
   int64 resource_id = 3; // ID рабочего места или парковочного места
   google.protobuf.Timestamp start_time = 4; // Время начала бронирования
   google.protobuf.Timestamp end_time = 5; // Время окончания бронирования
@@ -32,7 +32,7 @@ message Booking {
 }
 
 message CreateBookingRequest {
-  int64 user_id = 1;
+  string user_id = 1;
   int64 resource_id = 2;
   google.protobuf.Timestamp start_time = 3;
   google.protobuf.Timestamp end_time = 4;
@@ -45,7 +45,7 @@ message GetBookingByIdRequest {
 }
 
 message GetBookingsRequest {
-  int64 user_id = 1; // Фильтр по пользователю (опционально)
+  string user_id = 1; // Фильтр по пользователю (опционально)
   int64 resource_id = 2; // Фильтр по ресурсу (опционально)
   string booking_type = 3;
   google.protobuf.Timestamp start_time = 4; // Фильтр по времени начала (опционально)

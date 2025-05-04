@@ -18,7 +18,7 @@ type BookingGetter interface {
 }
 
 type BookingCreater interface {
-	CreateBooking(ctx context.Context, bookingType, status string, startTime, endTime time.Time, userId, resourceId int64) (models.Booking, error)
+	CreateBooking(ctx context.Context, bookingType, status string, startTime, endTime time.Time, userId string, resourceId int64) (models.Booking, error)
 }
 
 type BookingUpdater interface {
@@ -45,7 +45,7 @@ func NewBookingService(logger *log.Logger, resourceClient proto_gen.ResourceServ
 	}
 
 }
-func (b BookingService) GetBookings(ctx context.Context, bookingType string, startTime, endTime time.Time, userId, resourceID, page int64) ([]models.Booking, int64, error) {
+func (b BookingService) GetBookings(ctx context.Context, bookingType string, startTime, endTime time.Time, userId string, resourceID, page int64) ([]models.Booking, int64, error) {
 
 	filters := make([]storage.Field, 0)
 	if !startTime.IsZero() {
@@ -75,7 +75,7 @@ func (b BookingService) GetBookings(ctx context.Context, bookingType string, sta
 			})
 		}
 	}
-	if userId != 0 {
+	if userId != "" {
 		filters = append(filters, storage.Field{
 			Name:  "user_id",
 			Value: userId,
@@ -99,7 +99,7 @@ func (b BookingService) GetBookingById(ctx context.Context, bookingType string, 
 	return booking, nil
 }
 
-func (b BookingService) CreateBooking(ctx context.Context, bookingType, status string, startTime, endTime time.Time, userId, resourceId int64) (models.Booking, error) {
+func (b BookingService) CreateBooking(ctx context.Context, bookingType, status string, startTime, endTime time.Time, userId string, resourceId int64) (models.Booking, error) {
 	var (
 		resourceAvailable bool
 		err               error

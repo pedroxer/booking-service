@@ -4,7 +4,7 @@ import "time"
 
 type Booking struct {
 	BookingId  int64     `json:"id"`
-	UserId     int64     `json:"user_id"`
+	UserId     string    `json:"user_id"`
 	ResourceId int64     `json:"resource_id"`
 	StartTime  time.Time `json:"start_time"`
 	EndTime    time.Time `json:"end_time"`

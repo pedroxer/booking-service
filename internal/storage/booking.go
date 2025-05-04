@@ -159,7 +159,7 @@ func (s *Storage) GetBookingsById(ctx context.Context, bookingType string, booki
 	return booking, nil
 }
 
-func (s *Storage) CreateBooking(ctx context.Context, bookingType, status string, startTime, endTime time.Time, userId, resourceId int64) (models.Booking, error) {
+func (s *Storage) CreateBooking(ctx context.Context, bookingType, status string, startTime, endTime time.Time, userId string, resourceId int64) (models.Booking, error) {
 	query := `INSERT INTO `
 	if bookingType == utills.WorkplaceType {
 		query += "booking_service.booking (user_id, workplace_id, start_date, end_date, status, created_at, updated_at) "
