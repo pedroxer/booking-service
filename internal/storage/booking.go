@@ -2,6 +2,8 @@ package storage
 
 import (
 	"context"
+	"database/sql"
+	"errors"
 	"fmt"
 	"github.com/pedroxer/booking-service/internal/models"
 	"github.com/pedroxer/booking-service/internal/utills"
@@ -62,8 +64,11 @@ func (s *Storage) GetBookings(ctx context.Context, filters []Field, bookingType 
 	}
 	selectQuery += conditions.String() + GenerateLimits(page, utills.PageSize)
 
-	rows, err := s.db.Query(ctx, selectQuery)
+	rows, err := s.pgDb.Query(ctx, selectQuery)
 	if err != nil {
+		if errors.Is(err, sql.ErrNoRows) {
+			return nil, 0, utills.ErrNoRows
+		}
 		s.logger.Warn(err)
 		return nil, 0, err
 	}
@@ -90,7 +95,7 @@ func (s *Storage) GetBookings(ctx context.Context, filters []Field, bookingType 
 
 	countQuery += conditions.String() + ") as cnt"
 
-	if err := s.db.QueryRow(ctx, countQuery).Scan(&bookingCount); err != nil {
+	if err := s.pgDb.QueryRow(ctx, countQuery).Scan(&bookingCount); err != nil {
 		s.logger.Warn(err)
 		return nil, 0, err
 	}
@@ -142,7 +147,7 @@ func (s *Storage) GetBookingsById(ctx context.Context, bookingType string, booki
 
 	selectQuery := "SELECT " + strings.Join(bookingFileds, ",") + from + " WHERE id = $1"
 	var booking models.Booking
-	if err := s.db.QueryRow(ctx, selectQuery, bookingId).Scan(&booking.BookingId,
+	if err := s.pgDb.QueryRow(ctx, selectQuery, bookingId).Scan(&booking.BookingId,
 		&booking.UserId,
 		&booking.StartTime,
 		&booking.EndTime,
@@ -150,6 +155,9 @@ func (s *Storage) GetBookingsById(ctx context.Context, bookingType string, booki
 		&booking.CreatedAt,
 		&booking.UpdatedAt,
 		&booking.ResourceId); err != nil {
+		if errors.Is(err, sql.ErrNoRows) {
+			return models.Booking{}, utills.ErrNoRows
+		}
 		s.logger.Warn(err)
 		return models.Booking{}, err
 	}
@@ -169,7 +177,7 @@ func (s *Storage) CreateBooking(ctx context.Context, bookingType, status string,
 	query += " VALUES ($1, $2, $3, $4, $5, $6, $7) RETURNING *"
 
 	var booking models.Booking
-	if err := s.db.QueryRow(ctx, query, userId, resourceId, startTime, endTime, status, time.Now(), time.Now()).Scan(&booking.BookingId,
+	if err := s.pgDb.QueryRow(ctx, query, userId, resourceId, startTime, endTime, status, time.Now(), time.Now()).Scan(&booking.BookingId,
 		&booking.UserId,
 		&booking.ResourceId,
 		&booking.StartTime,
@@ -177,6 +185,9 @@ func (s *Storage) CreateBooking(ctx context.Context, bookingType, status string,
 		&booking.Status,
 		&booking.CreatedAt,
 		&booking.UpdatedAt); err != nil {
+		if errors.Is(err, sql.ErrNoRows) {
+			return models.Booking{}, utills.ErrNoRows
+		}
 		s.logger.Warn(err)
 		return models.Booking{}, err
 	}
@@ -184,14 +195,18 @@ func (s *Storage) CreateBooking(ctx context.Context, bookingType, status string,
 	return booking, nil
 }
 
-func (s *Storage) ApproveBooking(ctx context.Context, workplaceId int64) (bool, error) {
-	query := `UPDATE booking_service.booking SET status = $2 WHERE workplace_id = $1`
+func (s *Storage) ApproveBooking(ctx context.Context, workplaceId int64) (bool, int64, error) {
+	query := `UPDATE booking_service.booking SET status = $2 WHERE workplace_id = $1 RETURNING id`
 
-	if _, err := s.db.Exec(ctx, query, workplaceId, utills.StatusWorking); err != nil {
+	var bookingId int64
+	if err := s.pgDb.QueryRow(ctx, query, workplaceId, utills.StatusConfirmed).Scan(&bookingId); err != nil {
+		if errors.Is(err, sql.ErrNoRows) {
+			return false, -1, utills.ErrNoRows
+		}
 		s.logger.Warn(err)
-		return false, err
+		return false, -1, err
 	}
-	return true, nil
+	return true, bookingId, nil
 }
 
 func (s *Storage) UpdateBooking(ctx context.Context, bookingID int64, updateFields []Field, bookingType string) (models.Booking, error) {
@@ -238,7 +253,7 @@ func (s *Storage) UpdateBooking(ctx context.Context, bookingID int64, updateFiel
 	}
 	updateQuery += updates + fmt.Sprintf(" WHERE id = %d RETURNING *", bookingID)
 	var booking models.Booking
-	if err := s.db.QueryRow(ctx, updateQuery, bookingID).Scan(&booking.BookingId,
+	if err := s.pgDb.QueryRow(ctx, updateQuery, bookingID).Scan(&booking.BookingId,
 		&booking.UserId,
 		&booking.StartTime,
 		&booking.EndTime,
@@ -246,6 +261,9 @@ func (s *Storage) UpdateBooking(ctx context.Context, bookingID int64, updateFiel
 		&booking.CreatedAt,
 		&booking.UpdatedAt,
 		&booking.ResourceId); err != nil {
+		if errors.Is(err, sql.ErrNoRows) {
+			return models.Booking{}, utills.ErrNoRows
+		}
 		s.logger.Warn(err)
 		return models.Booking{}, err
 	}
@@ -260,7 +278,10 @@ func (s *Storage) GetTimeSlotsForResource(ctx context.Context, bookingType strin
 		query += "booking_service.parking_bookings WHERE parking_space_id = $1 "
 	}
 	query += "AND start_date >= $2 AND end_date <= $3 ORDER BY start_date"
-	rows, err := s.db.Query(ctx, query, resourceId, date.Format(utills.TimeLayout), date.Add(time.Hour*24).Format(utills.TimeLayout))
+	rows, err := s.pgDb.Query(ctx, query, resourceId, date.Format(utills.TimeLayout), date.Add(time.Hour*24).Format(utills.TimeLayout))
+	if errors.Is(err, sql.ErrNoRows) {
+		return nil, utills.ErrNoRows
+	}
 	if err != nil {
 		s.logger.Warn(err)
 		return nil, err
@@ -286,7 +307,10 @@ func (s *Storage) DeleteBooking(ctx context.Context, bookingType string, booking
 	} else {
 		query += "booking_service.parking_bookings WHERE id = $1"
 	}
-	if _, err := s.db.Exec(ctx, query, bookingId); err != nil {
+	if _, err := s.pgDb.Exec(ctx, query, bookingId); err != nil {
+		if errors.Is(err, sql.ErrNoRows) {
+			return utills.ErrNoRows
+		}
 		s.logger.Warn(err)
 		return err
 	}

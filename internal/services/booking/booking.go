@@ -8,6 +8,7 @@ import (
 	"github.com/pedroxer/booking-service/internal/storage"
 	"github.com/pedroxer/booking-service/internal/utills"
 	log "github.com/sirupsen/logrus"
+	"math"
 	"time"
 )
 
@@ -24,24 +25,35 @@ type BookingCreater interface {
 type BookingUpdater interface {
 	UpdateBooking(ctx context.Context, bookingID int64, updateFields []storage.Field, bookingType string) (models.Booking, error)
 	DeleteBooking(ctx context.Context, bookingType string, bookingId int64) error
-	ApproveBooking(ctx context.Context, workplaceId int64) (bool, error)
+	ApproveBooking(ctx context.Context, workplaceId int64) (bool, int64, error)
+}
+
+type ClickhouseCreater interface {
+	AddToClickHouse(ctx context.Context,
+		bookingId, resourceId int64,
+		userId, bookingType, bookingStatus, address, zone string,
+		floor, number int64,
+		eventDate, eventTime, startBookingTime, endBookingTime time.Time,
+		durationMinutes int64) error
 }
 type BookingService struct {
-	logger         *log.Logger
-	resourceClient proto_gen.ResourceServiceClient
-	bookingGetter  BookingGetter
-	bookingUpdater BookingUpdater
-	bookingCreater BookingCreater
+	logger            *log.Logger
+	resourceClient    proto_gen.ResourceServiceClient
+	bookingGetter     BookingGetter
+	bookingUpdater    BookingUpdater
+	bookingCreater    BookingCreater
+	clickhouseCreater ClickhouseCreater
 }
 
-func NewBookingService(logger *log.Logger, resourceClient proto_gen.ResourceServiceClient, bookingGetter BookingGetter, creater BookingCreater, updater BookingUpdater) *BookingService {
+func NewBookingService(logger *log.Logger, click ClickhouseCreater, resourceClient proto_gen.ResourceServiceClient, bookingGetter BookingGetter, creater BookingCreater, updater BookingUpdater) *BookingService {
 
 	return &BookingService{
-		logger:         logger,
-		resourceClient: resourceClient,
-		bookingGetter:  bookingGetter,
-		bookingCreater: creater,
-		bookingUpdater: updater,
+		logger:            logger,
+		resourceClient:    resourceClient,
+		bookingGetter:     bookingGetter,
+		bookingCreater:    creater,
+		bookingUpdater:    updater,
+		clickhouseCreater: click,
 	}
 
 }
@@ -102,6 +114,7 @@ func (b BookingService) GetBookingById(ctx context.Context, bookingType string, 
 func (b BookingService) CreateBooking(ctx context.Context, bookingType, status string, startTime, endTime time.Time, userId string, resourceId int64) (models.Booking, error) {
 	var (
 		resourceAvailable bool
+		parking           *proto_gen.ParkingSpace
 		err               error
 	)
 	if bookingType == utills.WorkplaceType {
@@ -114,7 +127,7 @@ func (b BookingService) CreateBooking(ctx context.Context, bookingType, status s
 		}
 		resourceAvailable = workplace.IsAvailable
 	} else if bookingType == utills.ParkingType {
-		parking, err := b.resourceClient.GetParkingSpaceById(ctx, &proto_gen.GetParkingSpaceByIdRequest{
+		parking, err = b.resourceClient.GetParkingSpaceById(ctx, &proto_gen.GetParkingSpaceByIdRequest{
 			Id: resourceId,
 		})
 		if err != nil {
@@ -140,10 +153,29 @@ func (b BookingService) CreateBooking(ctx context.Context, bookingType, status s
 			IsAvailable: false,
 		})
 	} else if bookingType == utills.ParkingType {
+		err = b.clickhouseCreater.AddToClickHouse(ctx,
+			booking.BookingId,
+			parking.Id,
+			booking.UserId,
+			utills.ParkingType,
+			utills.StatusConfirmed,
+			parking.Address,
+			parking.Zone,
+			-1,
+			parking.Number,
+			time.Now(),
+			time.Now(),
+			booking.StartTime,
+			booking.EndTime,
+			int64(math.Round(booking.EndTime.Sub(booking.StartTime).Minutes())))
+		if err != nil {
+			b.logger.Warnf("Error adding to clickhouse: %s", err.Error())
+		}
 		_, err = b.resourceClient.UpdateParkingSpace(ctx, &proto_gen.UpdateParkingSpaceRequest{
 			Id:          resourceId,
 			IsAvailable: false,
 		})
+
 	}
 	if err != nil {
 		b.logger.Warnf("Error updating resource: %s", err.Error())
@@ -218,10 +250,34 @@ func (b BookingService) ApproveBooking(ctx context.Context, uniqueTag string) (b
 		return false, err
 	}
 
-	success, err := b.bookingUpdater.ApproveBooking(ctx, workplace.Id)
+	success, bookingId, err := b.bookingUpdater.ApproveBooking(ctx, workplace.Id)
 	if err != nil {
 		b.logger.Warnf("Error approving booking: %s", err.Error())
 		return false, err
+	}
+	booking, err := b.bookingGetter.GetBookingsById(ctx, utills.WorkplaceType, bookingId)
+	if err != nil {
+		b.logger.Warnf("Error getting booking: %s", err.Error())
+		return false, err
+	}
+	err = b.clickhouseCreater.AddToClickHouse(ctx,
+		booking.BookingId,
+		workplace.Id,
+		booking.UserId,
+		utills.WorkplaceType,
+		utills.StatusConfirmed,
+		workplace.Address,
+		workplace.Zone,
+		workplace.Floor,
+		workplace.Number,
+		time.Now(),
+		time.Now(),
+		booking.StartTime,
+		booking.EndTime,
+		int64(math.Round(booking.EndTime.Sub(booking.StartTime).Minutes())))
+
+	if err != nil {
+		b.logger.Warnf("Error adding to clickhouse: %s", err.Error())
 	}
 	return success, nil
 }

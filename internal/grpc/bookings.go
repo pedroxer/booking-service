@@ -53,7 +53,7 @@ func (b *bookingAPI) CreateBooking(ctx context.Context, req *proto_gen.CreateBoo
 	resp, err := b.bookingService.CreateBooking(ctx, req.BookingType, utills.StatusPending, protoTimestampToTime(req.StartTime), protoTimestampToTime(req.EndTime), req.UserId, req.ResourceId)
 	if err != nil {
 		b.logger.Errorf("Error creating booking: %v", err)
-		return nil, status.Error(codes.Internal, err.Error())
+		return nil, generateErrors(err)
 	}
 	return bookingToGrpcBooking(&resp), nil
 }
@@ -68,7 +68,7 @@ func (b *bookingAPI) GetBookingById(ctx context.Context, req *proto_gen.GetBooki
 	resp, err := b.bookingService.GetBookingById(ctx, req.BookingType, req.Id)
 	if err != nil {
 		b.logger.Errorf("Error getting booking: %v", err)
-		return nil, status.Error(codes.Internal, err.Error())
+		return nil, generateErrors(err)
 	}
 	return bookingToGrpcBooking(&resp), nil
 }
@@ -87,7 +87,7 @@ func (b *bookingAPI) GetBookings(ctx context.Context, req *proto_gen.GetBookings
 	resp, count, err := b.bookingService.GetBookings(ctx, req.BookingType, protoTimestampToTime(req.StartTime), protoTimestampToTime(req.EndTime), req.UserId, req.ResourceId, req.Page)
 	if err != nil {
 		b.logger.Errorf("Error getting bookings: %v", err)
-		return nil, status.Error(codes.Internal, err.Error())
+		return nil, generateErrors(err)
 	}
 	grpcResp := &proto_gen.GetBookingsResponse{
 		Page:       req.Page,
@@ -111,7 +111,7 @@ func (b *bookingAPI) UpdateBooking(ctx context.Context, req *proto_gen.UpdateBoo
 	resp, err := b.bookingService.UpdateBooking(ctx, req.BookingType, req.Status, req.Id, protoTimestampToTime(req.StartTime), protoTimestampToTime(req.EndTime))
 	if err != nil {
 		b.logger.Errorf("Error updating booking: %v", err)
-		return nil, status.Error(codes.Internal, err.Error())
+		return nil, generateErrors(err)
 	}
 	return bookingToGrpcBooking(&resp), nil
 }
@@ -129,7 +129,7 @@ func (b *bookingAPI) CancelBooking(ctx context.Context, req *proto_gen.CancelBoo
 		b.logger.Errorf("Error canceling booking: %v", err)
 		return &proto_gen.CancelBookingResponse{
 			Success: resp,
-		}, status.Error(codes.Internal, err.Error())
+		}, generateErrors(err)
 	}
 	return &proto_gen.CancelBookingResponse{
 		Success: resp,
@@ -143,7 +143,7 @@ func (b *bookingAPI) ApproveByQRBooking(ctx context.Context, req *proto_gen.Appr
 	success, err := b.bookingService.ApproveBooking(ctx, req.UniqueTag)
 	if err != nil {
 		b.logger.Errorf("Error approving booking: %v", err)
-		return &proto_gen.ApproveByQRBookingResponse{Success: success}, status.Error(codes.Internal, err.Error())
+		return &proto_gen.ApproveByQRBookingResponse{Success: success}, generateErrors(err)
 	}
 	return &proto_gen.ApproveByQRBookingResponse{Success: success}, nil
 }
@@ -162,7 +162,7 @@ func (b *bookingAPI) GetSlotsToBooking(ctx context.Context, req *proto_gen.GetSl
 	timeSlots, err := b.bookingService.GetTimeSlotsForBooking(ctx, req.BookingType, req.ResourceId, protoTimestampToTime(req.Date))
 	if err != nil {
 		b.logger.Errorf("Error getting free slots for booking: %v", err)
-		return nil, status.Error(codes.Internal, err.Error())
+		return nil, generateErrors(err)
 	}
 	grpcTimeSlots := make([]*proto_gen.TimeSlot, len(timeSlots))
 	for i, timeSlot := range timeSlots {

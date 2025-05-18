@@ -1,13 +1,17 @@
 {
   "port": 8080,
   "postgres": {
-    "host": "host.docker.internal",
+    "host": "localhost",
     "port": 5432,
     "db": "booking",
     "sslmode": "disable"
   },
+  "clickhouse":{
+    "host": "localhost",
+    "port": 8123
+  },
   "resource_service": {
-    "host": "host.docker.internal",
+    "host": "localhost",
     "port": 8081
   }
 }

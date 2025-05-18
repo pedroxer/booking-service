@@ -1,8 +1,9 @@
 package utills
 
 const (
-	StatusPending = "PENDING"
-	StatusWorking = "WORKING"
+	StatusPending   = "PENDING"
+	StatusConfirmed = "CONFIRMED"
+	StatusDone      = "DONE" // для click'a
 )
 
 const PageSize = 15

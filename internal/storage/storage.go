@@ -1,6 +1,7 @@
 package storage
 
 import (
+	"github.com/ClickHouse/clickhouse-go/v2/lib/driver"
 	"github.com/jackc/pgx/v5"
 	"github.com/pedroxer/booking-service/internal/config"
 	"github.com/pedroxer/booking-service/internal/database"
@@ -8,17 +9,23 @@ import (
 )
 
 type Storage struct {
-	db     *pgx.Conn
-	logger *log.Logger
+	pgDb    *pgx.Conn
+	clickDb driver.Conn
+	logger  *log.Logger
 }
 
-func NewStorage(cfg *config.Postgres, logger *log.Logger) (*Storage, error) {
-	pgConn, err := database.ConnectToPg(cfg)
+func NewStorage(pgCfg *config.Postgres, clickCfg *config.Clickhouse, logger *log.Logger) (*Storage, error) {
+	pgConn, err := database.ConnectToPg(pgCfg)
+	if err != nil {
+		return nil, err
+	}
+	clickConn, err := database.ConnectToClick(clickCfg)
 	if err != nil {
 		return nil, err
 	}
 	return &Storage{
-		db:     pgConn,
-		logger: logger,
+		pgDb:    pgConn,
+		clickDb: clickConn,
+		logger:  logger,
 	}, nil
 }
