@@ -26,7 +26,7 @@ func main() {
 		log.Fatal(err)
 	}
 
-	store, err := storage.NewStorage(&cfg.Postgres, log)
+	store, err := storage.NewStorage(&cfg.Postgres, &cfg.Clickhouse, log)
 	if err != nil {
 		log.Fatalf("failed connect to db %s", err)
 	}

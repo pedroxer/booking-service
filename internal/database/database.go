@@ -35,6 +35,7 @@ func ConnectToClick(cfg *config.Clickhouse) (driver.Conn, error) {
 		Settings: clickhouse.Settings{
 			"max_execution_time": 60,
 		},
+		Protocol: clickhouse.HTTP,
 	})
 	if err != nil {
 		return nil, fmt.Errorf("ConnectToClick: %w", err)

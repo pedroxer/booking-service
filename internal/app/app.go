@@ -13,7 +13,7 @@ type App struct {
 }
 
 func NewApp(log *log.Logger, grpcPort int, store *storage.Storage, resourceClient proto_gen.ResourceServiceClient) *App {
-	bookingService := booking.NewBookingService(log, resourceClient, store, store, store)
+	bookingService := booking.NewBookingService(log, store, resourceClient, store, store, store)
 	grpcApp := grpc_app.NewApp(
 		log,
 		grpcPort,

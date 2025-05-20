@@ -23,6 +23,6 @@ type ResourceService struct {
 type Clickhouse struct {
 	Host      string `json:"host"`
 	Port      int    `json:"port"`
-	ClickUser string `env:"CLICK_USER, notEmpty"`
-	ClickPass string `env:"CLICK_PASS, notEmpty"`
+	ClickUser string `env:"CLICK_USER,notEmpty"`
+	ClickPass string `env:"CLICK_PASS,notEmpty"`
 }
