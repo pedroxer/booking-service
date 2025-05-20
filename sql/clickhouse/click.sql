@@ -1,6 +1,6 @@
 CREATE DATABASE IF NOT EXISTS analytics;
 
-CREATE TABLE booking_analytics(
+CREATE TABLE analytics.booking_analytics(
     booking_id int,
     resource_id int,
     user_id varchar,
