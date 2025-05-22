@@ -19,6 +19,8 @@ COPY . .
 
 COPY --from=builder /booking-service .
 
-EXPOSE 8080
+RUN apk --update --no-cache add curl
+EXPOSE 8082
+EXPOSE 2121
 
 CMD ["./booking-service"]

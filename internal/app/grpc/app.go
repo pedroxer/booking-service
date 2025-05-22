@@ -3,6 +3,7 @@ package grpc_app
 import (
 	"fmt"
 	my_grpc "github.com/pedroxer/booking-service/internal/grpc"
+	"github.com/pedroxer/booking-service/internal/grpc/metric_interceptor"
 	log "github.com/sirupsen/logrus"
 	"google.golang.org/grpc"
 	"net"
@@ -13,9 +14,14 @@ type App struct {
 	grpcServer *grpc.Server
 	port       int
 }
+type Interceptor interface {
+	Unary() grpc.UnaryServerInterceptor
+	Stream() grpc.StreamServerInterceptor
+}
 
 func NewApp(log *log.Logger, port int, bookingService my_grpc.BookingInterface) *App {
-	server := grpc.NewServer()
+	interceptor := metric_interceptor.NewMetricInterceptor()
+	server := grpc.NewServer(grpc.UnaryInterceptor(interceptor.Unary()), grpc.StreamInterceptor(interceptor.Stream()))
 	my_grpc.RegisterBookingServiceServer(server, log, bookingService)
 	return &App{
 		logger:     log,

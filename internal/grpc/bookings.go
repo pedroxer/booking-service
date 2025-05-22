@@ -3,6 +3,7 @@ package my_grpc
 import (
 	"context"
 	"github.com/pedroxer/booking-service/internal/models"
+	"github.com/pedroxer/booking-service/internal/prometheus"
 	proto_gen "github.com/pedroxer/booking-service/internal/proto_gen/protos"
 	"github.com/pedroxer/booking-service/internal/utills"
 	log "github.com/sirupsen/logrus"
@@ -55,6 +56,7 @@ func (b *bookingAPI) CreateBooking(ctx context.Context, req *proto_gen.CreateBoo
 		b.logger.Errorf("Error creating booking: %v", err)
 		return nil, generateErrors(err)
 	}
+	prometheus.IncrementBookingCounter(req.BookingType)
 	return bookingToGrpcBooking(&resp), nil
 }
 

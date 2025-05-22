@@ -1,17 +1,17 @@
 {
-  "port": 8080,
+  "port": 8082,
   "postgres": {
-    "host": "localhost",
+    "host": "app-postgres",
     "port": 5432,
     "db": "booking",
     "sslmode": "disable"
   },
   "clickhouse":{
-    "host": "localhost",
+    "host": "app-clickhouse",
     "port": 9000
   },
   "resource_service": {
-    "host": "localhost",
-    "port": 8081
+    "host": "app-resource-service",
+    "port": 8083
   }
 }

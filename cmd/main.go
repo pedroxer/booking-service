@@ -5,6 +5,7 @@ import (
 	"github.com/caarlos0/env/v6"
 	"github.com/pedroxer/booking-service/internal/app"
 	"github.com/pedroxer/booking-service/internal/config"
+	"github.com/pedroxer/booking-service/internal/prometheus"
 	"github.com/pedroxer/booking-service/internal/storage"
 	"github.com/pedroxer/booking-service/internal/utills"
 	log "github.com/sirupsen/logrus"
@@ -26,6 +27,17 @@ func main() {
 		log.Fatal(err)
 	}
 
+	go func() {
+		err = prometheus.RunRestServer()
+		if err != nil {
+			log.Fatal(err)
+		}
+	}()
+
+	log.Info("starting http server")
+	if err := prometheus.MetricsInit(); err != nil {
+		log.Fatal(err)
+	}
 	store, err := storage.NewStorage(&cfg.Postgres, &cfg.Clickhouse, log)
 	if err != nil {
 		log.Fatalf("failed connect to db %s", err)
